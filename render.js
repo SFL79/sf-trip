@@ -89,9 +89,15 @@ function renderMap(pins) {
         function onPosition(pos) {
           const { latitude: lat, longitude: lon, accuracy } = pos.coords;
           if (!meMarker) {
-            meMarker = L.circleMarker([lat, lon], {
-              radius: 7, color: "#fff", weight: 3, fillColor: "#2563eb", fillOpacity: 1,
-            }).addTo(map).bindPopup("You are here");
+            const meIcon = L.divIcon({
+              className: "me-icon",
+              html: "<div class='me-badge'>🧍</div>",
+              iconSize: [34, 34],
+              iconAnchor: [17, 17],
+              popupAnchor: [0, -18],
+            });
+            meMarker = L.marker([lat, lon], { icon: meIcon, zIndexOffset: 1000 })
+              .addTo(map).bindPopup("You are here");
             meCircle = L.circle([lat, lon], { radius: accuracy, color: "#2563eb", weight: 1, fillOpacity: 0.08 }).addTo(map);
           } else {
             meMarker.setLatLng([lat, lon]);
@@ -163,6 +169,11 @@ export function renderPage({ days, total, updatedAt, pins }) {
   .locate-btn {
     display: flex !important; align-items: center; justify-content: center;
     width: 30px; height: 30px; font-size: 16px; text-decoration: none;
+  }
+  .me-badge {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #2563eb; border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    display: flex; align-items: center; justify-content: center; font-size: 18px; line-height: 1;
   }
   .day { margin-bottom: 1.75rem; }
   .day h2 {

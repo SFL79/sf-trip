@@ -1,0 +1,49 @@
+name: Build & Deploy SF Trip
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Every 3 hours (UTC). Refreshes the Luma feed. Manual dispatch below forces it.
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}
+
+# Allow the workflow to publish to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Avoid overlapping deploys; let the newest win.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - name: Build page
+        env:
+          LUMA_ICS_URL: ${{ secrets.LUMA_ICS_URL }}
+        run: node build.js
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

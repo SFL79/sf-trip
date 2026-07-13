@@ -1,0 +1,20 @@
+[
+  {
+    "title": "AMD AI Summit",
+    "start": "2026-07-22T09:00",
+    "end": "2026-07-22T17:00",
+    "location": "San Jose, CA",
+    "url": "https://www.amd.com/en/corporate/events/ai-summit.html",
+    "category": "conference",
+    "notes": "Registered"
+  },
+  {
+    "title": "SFMOMA (example — edit or delete me)",
+    "start": "2026-07-19T11:00",
+    "end": "2026-07-19T14:00",
+    "location": "151 Third St, San Francisco, CA",
+    "url": "https://www.sfmoma.org/",
+    "category": "museum",
+    "notes": "Placeholder to show the format"
+  }
+]

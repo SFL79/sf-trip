@@ -1,0 +1,15 @@
+{
+  "name": "sf-trip-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static dashboard centralizing my SF trip: Luma events + manual events, deployed to GitHub Pages.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "probe": "node -e \"import('node-ical').then(m=>m.default.async.fromURL(process.env.LUMA_ICS_URL)).then(d=>console.log(JSON.stringify(d,null,2)))\""
+  },
+  "dependencies": {
+    "luxon": "^3.5.0",
+    "node-ical": "^0.20.1"
+  }
+}

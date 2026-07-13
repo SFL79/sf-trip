@@ -18,14 +18,14 @@
     "notes": "Kickoff 3pm ET / 12pm PT · Match in Atlanta · pick a bar/watch party"
   },
   {
-    "title": "AMD AI Summit",
+    "title": "AMD Advancing AI (AI Summit)",
     "start": "2026-07-22T09:00",
     "end": "2026-07-22T17:00",
-    "location": "San Jose, CA",
-    "url": "https://www.amd.com/en/corporate/events/ai-summit.html",
+    "location": "Moscone West, 747 Howard St, San Francisco, CA",
+    "url": "https://www.amd.com/en/corporate/events/advancing-ai.html",
     "category": "conference",
-    "notes": "Registered",
-    "lat": 37.3297,
-    "lon": -121.889
+    "notes": "Registered · event runs July 22–23",
+    "lat": 37.78406,
+    "lon": -122.40145
   }
 ]

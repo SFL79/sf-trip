@@ -83,6 +83,41 @@ function renderMap(pins) {
         }
         if (bounds.length === 1) map.setView(bounds[0], 14);
         else map.fitBounds(bounds, { padding: [40, 40] });
+
+        // --- Live "you are here" marker (browser geolocation) ---
+        let meMarker = null, meCircle = null, firstFix = true;
+        function onPosition(pos) {
+          const { latitude: lat, longitude: lon, accuracy } = pos.coords;
+          if (!meMarker) {
+            meMarker = L.circleMarker([lat, lon], {
+              radius: 7, color: "#fff", weight: 3, fillColor: "#2563eb", fillOpacity: 1,
+            }).addTo(map).bindPopup("You are here");
+            meCircle = L.circle([lat, lon], { radius: accuracy, color: "#2563eb", weight: 1, fillOpacity: 0.08 }).addTo(map);
+          } else {
+            meMarker.setLatLng([lat, lon]);
+            meCircle.setLatLng([lat, lon]).setRadius(accuracy);
+          }
+          if (firstFix) { map.setView([lat, lon], Math.max(map.getZoom(), 13)); firstFix = false; }
+        }
+        if ("geolocation" in navigator) {
+          navigator.geolocation.watchPosition(onPosition, () => {}, {
+            enableHighAccuracy: true, maximumAge: 30000, timeout: 20000,
+          });
+          // "Recenter on me" button
+          const Locate = L.Control.extend({
+            options: { position: "topleft" },
+            onAdd() {
+              const b = L.DomUtil.create("a", "leaflet-bar leaflet-control locate-btn");
+              b.href = "#"; b.title = "Show my location"; b.innerHTML = "📍";
+              L.DomEvent.on(b, "click", (e) => {
+                L.DomEvent.preventDefault(e);
+                if (meMarker) map.setView(meMarker.getLatLng(), 15);
+              });
+              return b;
+            },
+          });
+          map.addControl(new Locate());
+        }
       });
     </script>`;
 }
@@ -125,6 +160,10 @@ export function renderPage({ days, total, updatedAt, pins }) {
     border: 1px solid var(--line); border-radius: 12px; background: var(--card);
   }
   .leaflet-popup-content { font: 14px/1.4 -apple-system, sans-serif; }
+  .locate-btn {
+    display: flex !important; align-items: center; justify-content: center;
+    width: 30px; height: 30px; font-size: 16px; text-decoration: none;
+  }
   .day { margin-bottom: 1.75rem; }
   .day h2 {
     position: sticky; top: 0; z-index: 1; margin: 0 0 .6rem;

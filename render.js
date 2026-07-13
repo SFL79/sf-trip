@@ -73,11 +73,14 @@ function renderMap(pins) {
             radius: 8, color: "#fff", weight: 2, fillColor: color, fillOpacity: 1,
           }).addTo(map);
           const link = p.url
-            ? '<br><a href="' + p.url + '" target="_blank" rel="noopener">Open ↗</a>'
+            ? '<a href="' + p.url + '" target="_blank" rel="noopener">Open ↗</a>'
             : "";
+          const dirUrl = "https://www.google.com/maps/dir/?api=1&destination=" + p.lat + "," + p.lon;
+          const directions = '<a href="' + dirUrl + '" target="_blank" rel="noopener">🧭 Directions</a>';
           marker.bindPopup(
             "<strong>" + p.title + "</strong><br>" + p.when +
-            (p.location ? "<br>" + p.location : "") + link
+            (p.location ? "<br>" + p.location : "") +
+            '<div class="popup-links">' + directions + (link ? " · " + link : "") + "</div>"
           );
           bounds.push([p.lat, p.lon]);
         }
@@ -166,6 +169,7 @@ export function renderPage({ days, total, updatedAt, pins }) {
     border: 1px solid var(--line); border-radius: 12px; background: var(--card);
   }
   .leaflet-popup-content { font: 14px/1.4 -apple-system, sans-serif; }
+  .popup-links { margin-top: .4rem; }
   .locate-btn {
     display: flex !important; align-items: center; justify-content: center;
     width: 30px; height: 30px; font-size: 16px; text-decoration: none;

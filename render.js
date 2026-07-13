@@ -49,11 +49,49 @@ function renderDay(day) {
     </section>`;
 }
 
-export function renderPage({ days, total, updatedAt }) {
+function renderMap(pins) {
+  if (!pins || pins.length === 0) return "";
+  // Leaflet from CDN; data injected as JSON. Pins colored by source.
+  return `
+    <div id="map"></div>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJ0N7oS/vh/1S7CrH+CFQ9fk80pmM=" crossorigin=""></script>
+    <script>
+      const PINS = ${JSON.stringify(pins)};
+      window.addEventListener("load", () => {
+        const map = L.map("map", { scrollWheelZoom: false });
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+        const bounds = [];
+        for (const p of PINS) {
+          const color = p.source === "luma" ? "#7c3aed" : "#059669";
+          const marker = L.circleMarker([p.lat, p.lon], {
+            radius: 8, color: "#fff", weight: 2, fillColor: color, fillOpacity: 1,
+          }).addTo(map);
+          const link = p.url
+            ? '<br><a href="' + p.url + '" target="_blank" rel="noopener">Open ↗</a>'
+            : "";
+          marker.bindPopup(
+            "<strong>" + p.title + "</strong><br>" + p.when +
+            (p.location ? "<br>" + p.location : "") + link
+          );
+          bounds.push([p.lat, p.lon]);
+        }
+        if (bounds.length === 1) map.setView(bounds[0], 14);
+        else map.fitBounds(bounds, { padding: [40, 40] });
+      });
+    </script>`;
+}
+
+export function renderPage({ days, total, updatedAt, pins }) {
   const body =
     days.length === 0
       ? `<p class="empty">No events yet. Add some to <code>events.json</code> or set <code>LUMA_ICS_URL</code>.</p>`
-      : days.map(renderDay).join("");
+      : renderMap(pins) + days.map(renderDay).join("");
 
   return `<!doctype html>
 <html lang="en">
@@ -82,6 +120,11 @@ export function renderPage({ days, total, updatedAt }) {
   .wrap { max-width: 720px; margin: 0 auto; padding: 1.25rem 1rem 0; }
   header h1 { margin: 0 0 .15rem; font-size: 1.6rem; }
   header .sub { color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
+  #map {
+    height: 300px; width: 100%; margin-bottom: 1.75rem;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--card);
+  }
+  .leaflet-popup-content { font: 14px/1.4 -apple-system, sans-serif; }
   .day { margin-bottom: 1.75rem; }
   .day h2 {
     position: sticky; top: 0; z-index: 1; margin: 0 0 .6rem;

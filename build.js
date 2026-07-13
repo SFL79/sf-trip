@@ -38,6 +38,8 @@ async function fetchLumaEvents() {
       end,
       location: (item.location || "").toString().trim(),
       url,
+      lat: item.geo?.lat ?? null,
+      lon: item.geo?.lon ?? null,
       category: "luma",
       notes: "",
       source: "luma",
@@ -67,6 +69,8 @@ function loadManualEvents() {
       end: end && end.isValid ? end : null,
       location: (e.location || "").trim(),
       url: (e.url || "").trim(),
+      lat: typeof e.lat === "number" ? e.lat : null,
+      lon: typeof e.lon === "number" ? e.lon : null,
       category: (e.category || "manual").trim(),
       notes: (e.notes || "").trim(),
       source: "manual",
@@ -98,8 +102,20 @@ async function main() {
   const all = [...luma, ...manual].sort((a, b) => a.start.toMillis() - b.start.toMillis());
   const days = groupByDay(all);
 
+  const pins = all
+    .filter((e) => typeof e.lat === "number" && typeof e.lon === "number")
+    .map((e) => ({
+      title: e.title,
+      lat: e.lat,
+      lon: e.lon,
+      source: e.source,
+      url: e.url,
+      location: e.location,
+      when: e.start.toFormat("ccc LLL d, h:mm a"),
+    }));
+
   const updatedAt = DateTime.now().setZone(ZONE).toFormat("cccc, LLLL d 'at' h:mm a 'PT'");
-  const html = renderPage({ days, total: all.length, updatedAt });
+  const html = renderPage({ days, total: all.length, updatedAt, pins });
 
   mkdirSync(join(ROOT, "public"), { recursive: true });
   writeFileSync(join(ROOT, "public", "index.html"), html, "utf8");

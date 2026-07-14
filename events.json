@@ -22,6 +22,17 @@
     "lon": -122.3973
   },
   {
+    "title": "Coit Tower",
+    "start": "2026-07-14T17:30",
+    "end": "2026-07-14T18:30",
+    "location": "Coit Tower, 1 Telegraph Hill Blvd, San Francisco, CA",
+    "url": "https://sfrecpark.org/facilities/facility/details/Coit-Tower-290",
+    "category": "sightseeing",
+    "notes": "~15–20 min uphill walk from the Exploratorium",
+    "lat": 37.8024,
+    "lon": -122.4058
+  },
+  {
     "title": "SF Ghost Tour — The Haunt",
     "start": "2026-07-14T20:00",
     "end": "2026-07-14T21:45",

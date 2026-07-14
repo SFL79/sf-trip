@@ -11,6 +11,17 @@
     "lon": -122.4098
   },
   {
+    "title": "Exploratorium",
+    "start": "2026-07-14T15:00",
+    "end": "2026-07-14T17:00",
+    "location": "Exploratorium, Pier 15, Embarcadero, San Francisco, CA",
+    "url": "https://www.exploratorium.edu/visit",
+    "category": "museum",
+    "notes": "After the World Cup game",
+    "lat": 37.8017,
+    "lon": -122.3973
+  },
+  {
     "title": "World Cup Semi-Final: England vs Argentina (watch party)",
     "start": "2026-07-15T12:00",
     "end": "2026-07-15T14:00",

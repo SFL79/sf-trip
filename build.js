@@ -100,11 +100,13 @@ function groupByDay(events) {
 async function main() {
   const [luma, manual] = [await fetchLumaEvents(), loadManualEvents()];
   const all = [...luma, ...manual].sort((a, b) => a.start.toMillis() - b.start.toMillis());
+  all.forEach((e, i) => (e.id = i));
   const days = groupByDay(all);
 
   const pins = all
     .filter((e) => typeof e.lat === "number" && typeof e.lon === "number")
     .map((e) => ({
+      id: e.id,
       title: e.title,
       lat: e.lat,
       lon: e.lon,

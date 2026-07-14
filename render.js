@@ -31,12 +31,16 @@ function renderEvent(ev) {
     ? `<div class="meta loc">📍 ${esc(ev.location)}</div>`
     : "";
   const notes = ev.notes ? `<div class="meta notes">${esc(ev.notes)}</div>` : "";
+  const mapBtn =
+    typeof ev.lat === "number" && typeof ev.lon === "number"
+      ? `<button type="button" class="map-btn" onclick="focusPin(${ev.id})">📍 Show in map</button>`
+      : "";
   return `
       <li class="event">
         <div class="time">${esc(timeRange(ev))}</div>
         <div class="body">
           <div class="head">${title}${badge(ev)}</div>
-          ${loc}${notes}
+          ${loc}${notes}${mapBtn}
         </div>
       </li>`;
 }
@@ -67,11 +71,13 @@ function renderMap(pins) {
           attribution: "&copy; OpenStreetMap contributors",
         }).addTo(map);
         const bounds = [];
+        const markersById = {};
         for (const p of PINS) {
           const color = p.source === "luma" ? "#7c3aed" : "#059669";
           const marker = L.circleMarker([p.lat, p.lon], {
             radius: 8, color: "#fff", weight: 2, fillColor: color, fillOpacity: 1,
           }).addTo(map);
+          markersById[p.id] = marker;
           const link = p.url
             ? '<a href="' + p.url + '" target="_blank" rel="noopener">Open ↗</a>'
             : "";
@@ -86,6 +92,22 @@ function renderMap(pins) {
         }
         if (bounds.length === 1) map.setView(bounds[0], 14);
         else map.fitBounds(bounds, { padding: [40, 40] });
+
+        // --- "Show in map" from an event card: scroll to map, focus + pulse the pin ---
+        window.focusPin = function (id) {
+          const m = markersById[id];
+          if (!m) return;
+          document.getElementById("map").scrollIntoView({ behavior: "smooth", block: "start" });
+          map.setView(m.getLatLng(), 15, { animate: true });
+          m.openPopup();
+          let on = false, ticks = 0;
+          const iv = setInterval(() => {
+            m.setRadius(on ? 8 : 15);
+            m.setStyle({ weight: on ? 2 : 4 });
+            on = !on;
+            if (++ticks >= 6) { clearInterval(iv); m.setRadius(8); m.setStyle({ weight: 2 }); }
+          }, 250);
+        };
 
         // --- Live "you are here" marker (browser geolocation) ---
         let meMarker = null, meCircle = null, firstFix = true;
@@ -205,6 +227,12 @@ export function renderPage({ days, total, updatedAt, pins }) {
   }
   .badge-luma { background: var(--luma); }
   .badge-manual { background: var(--manual); }
+  .map-btn {
+    margin-top: .5rem; padding: .3rem .6rem; font-size: .78rem; cursor: pointer;
+    color: var(--accent); background: transparent; border: 1px solid var(--line);
+    border-radius: 999px; -webkit-tap-highlight-color: transparent;
+  }
+  .map-btn:hover { border-color: var(--accent); }
   .empty { color: var(--muted); }
   footer { color: var(--muted); font-size: .78rem; text-align: center; margin-top: 2rem; }
   code { background: var(--card); padding: .1rem .3rem; border-radius: 4px; border: 1px solid var(--line); }

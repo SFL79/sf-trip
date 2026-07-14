@@ -3,10 +3,12 @@
     "title": "World Cup Semi-Final: France vs Spain (watch party)",
     "start": "2026-07-14T12:00",
     "end": "2026-07-14T14:00",
-    "location": "TBD — watching somewhere in SF",
+    "location": "Pier 39, San Francisco, CA",
     "url": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026",
     "category": "world cup",
-    "notes": "Kickoff 3pm ET / 12pm PT · Match in Dallas · pick a bar/watch party"
+    "notes": "Kickoff 3pm ET / 12pm PT · Match in Dallas · watching at Pier 39",
+    "lat": 37.8087,
+    "lon": -122.4098
   },
   {
     "title": "World Cup Semi-Final: England vs Argentina (watch party)",

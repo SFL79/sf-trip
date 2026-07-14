@@ -58,6 +58,12 @@ function renderMap(pins) {
   // Leaflet from CDN; data injected as JSON. Pins colored by source.
   return `
     <div id="map"></div>
+    <div class="map-legend">
+      <span><i class="dot dot-luma"></i> Luma</span>
+      <span><i class="dot dot-manual"></i> Added</span>
+      <span><i class="dot dot-me">🧍</i> You</span>
+      <span>number = July date</span>
+    </div>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -73,10 +79,14 @@ function renderMap(pins) {
         const bounds = [];
         const markersById = {};
         for (const p of PINS) {
-          const color = p.source === "luma" ? "#7c3aed" : "#059669";
-          const marker = L.circleMarker([p.lat, p.lon], {
-            radius: 8, color: "#fff", weight: 2, fillColor: color, fillOpacity: 1,
-          }).addTo(map);
+          const icon = L.divIcon({
+            className: "trip-pin",
+            html: "<div class='pin-badge pin-" + p.source + "'>" + p.day + "</div>",
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            popupAnchor: [0, -14],
+          });
+          const marker = L.marker([p.lat, p.lon], { icon }).addTo(map);
           markersById[p.id] = marker;
           const link = p.url
             ? '<a href="' + p.url + '" target="_blank" rel="noopener">Open ↗</a>'
@@ -100,13 +110,8 @@ function renderMap(pins) {
           document.getElementById("map").scrollIntoView({ behavior: "smooth", block: "start" });
           map.setView(m.getLatLng(), 15, { animate: true });
           m.openPopup();
-          let on = false, ticks = 0;
-          const iv = setInterval(() => {
-            m.setRadius(on ? 8 : 15);
-            m.setStyle({ weight: on ? 2 : 4 });
-            on = !on;
-            if (++ticks >= 6) { clearInterval(iv); m.setRadius(8); m.setStyle({ weight: 2 }); }
-          }, 250);
+          const el = m.getElement() && m.getElement().querySelector(".pin-badge");
+          if (el) { el.classList.remove("pin-pulse"); void el.offsetWidth; el.classList.add("pin-pulse"); }
         };
 
         // --- Live "you are here" marker (browser geolocation) ---
@@ -187,9 +192,33 @@ export function renderPage({ days, total, updatedAt, pins }) {
   header h1 { margin: 0 0 .15rem; font-size: 1.6rem; }
   header .sub { color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
   #map {
-    height: 300px; width: 100%; margin-bottom: 1.75rem;
+    height: 300px; width: 100%; margin-bottom: .5rem;
     border: 1px solid var(--line); border-radius: 12px; background: var(--card);
   }
+  .map-legend {
+    display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-bottom: 1.75rem;
+    font-size: .75rem; color: var(--muted);
+  }
+  .map-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+  .map-legend .dot {
+    width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-style: normal;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .dot-luma { background: #7c3aed; }
+  .dot-manual { background: #059669; }
+  .dot-me { background: #2563eb; }
+  .trip-pin { background: transparent; border: none; }
+  .pin-badge {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font: 700 12px/1 -apple-system, sans-serif; color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.45);
+  }
+  .pin-luma { background: #7c3aed; }
+  .pin-manual { background: #059669; }
+  .pin-pulse { animation: pinpulse .45s ease-in-out 4; }
+  @keyframes pinpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.55); } }
   .leaflet-popup-content { font: 14px/1.4 -apple-system, sans-serif; }
   .popup-links { margin-top: .4rem; }
   .locate-btn {

@@ -113,6 +113,7 @@ async function main() {
       source: e.source,
       url: e.url,
       location: e.location,
+      day: e.start.toFormat("d"),
       when: e.start.toFormat("ccc LLL d, h:mm a"),
     }));
 

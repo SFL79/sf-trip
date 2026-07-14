@@ -4,8 +4,9 @@ on:
   push:
     branches: [main]
   schedule:
-    # Every 3 hours (UTC). Refreshes the Luma feed. Manual dispatch below forces it.
-    - cron: "0 */3 * * *"
+    # Every 10 minutes. Refreshes the Luma feed so newly-registered events appear
+    # without a manual rebuild. Free on public repos (unlimited Actions minutes).
+    - cron: "*/10 * * * *"
   workflow_dispatch: {}
 
 # Allow the workflow to publish to GitHub Pages.

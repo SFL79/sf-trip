@@ -11,13 +11,13 @@
     "lon": -122.4098
   },
   {
-    "title": "Exploratorium",
-    "start": "2026-07-14T15:00",
-    "end": "2026-07-14T17:00",
+    "title": "Exploratorium After Dark",
+    "start": "2026-07-16T19:00",
+    "end": "2026-07-16T22:00",
     "location": "Exploratorium, Pier 15, Embarcadero, San Francisco, CA",
     "url": "https://www.exploratorium.edu/visit",
     "category": "museum",
-    "notes": "After the World Cup game",
+    "notes": "Adults-only (18+) evening event",
     "lat": 37.8017,
     "lon": -122.3973
   },
@@ -47,10 +47,12 @@
     "title": "World Cup Semi-Final: England vs Argentina (watch party)",
     "start": "2026-07-15T12:00",
     "end": "2026-07-15T14:00",
-    "location": "TBD — watching somewhere in SF",
+    "location": "Underdogs Cantina, 128 King St, San Francisco, CA",
     "url": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026",
     "category": "world cup",
-    "notes": "Kickoff 3pm ET / 12pm PT · Match in Atlanta · pick a bar/watch party"
+    "notes": "Kickoff 3pm ET / 12pm PT · Match in Atlanta · watching at Underdogs Cantina",
+    "lat": 37.77934,
+    "lon": -122.38990
   },
   {
     "title": "AMD Advancing AI (AI Summit)",

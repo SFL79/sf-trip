@@ -73,8 +73,8 @@ npm run probe        # dumps the raw parsed Luma feed (needs LUMA_ICS_URL) for d
 
 The Luma feed URL is **not** stored in the repo. It lives only as the `LUMA_ICS_URL` GitHub Actions
 secret. Get it from the owner (Luma → calendar → Add iCal Subscription → copy raw URL) when needed
-locally. **Never commit it or print it into `public/`.** There's a habit of grep-checking staged
-files for `icssk-` before every push — keep doing that.
+locally. **Never commit it or print it into `public/`.** Grep-check staged files before every push for the
+feed host — `git grep --cached -l "api.luma.com/ics"` should return nothing.
 
 ## Deploy
 

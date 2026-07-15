@@ -46,9 +46,10 @@ function renderEvent(ev) {
 }
 
 function renderDay(day) {
+  const marker = day.past ? `<span class="past-tag" aria-label="passed">✕</span> ` : "";
   return `
-    <section class="day">
-      <h2>${esc(day.dayLabel)}</h2>
+    <section class="day${day.past ? " day-past" : ""}">
+      <h2>${marker}${esc(day.dayLabel)}</h2>
       <ul class="events">${day.events.map(renderEvent).join("")}</ul>
     </section>`;
 }
@@ -79,9 +80,11 @@ function renderMap(pins) {
         const bounds = [];
         const markersById = {};
         for (const p of PINS) {
+          const pastCls = p.past ? " pin-past" : "";
+          const cross = p.past ? "<span class='pin-cross'>✕</span>" : "";
           const icon = L.divIcon({
             className: "trip-pin",
-            html: "<div class='pin-badge pin-" + p.source + "'>" + p.day + "</div>",
+            html: "<div class='pin-badge pin-" + p.source + pastCls + "'>" + p.day + cross + "</div>",
             iconSize: [28, 28],
             iconAnchor: [14, 14],
             popupAnchor: [0, -14],
@@ -217,6 +220,12 @@ export function renderPage({ days, total, updatedAt, pins }) {
   }
   .pin-luma { background: #7c3aed; }
   .pin-manual { background: #059669; }
+  .pin-past { background: #9ca3af; opacity: .8; position: relative; }
+  .pin-cross {
+    position: absolute; inset: -3px 0 auto; top: -8px; right: -6px;
+    font: 700 13px/1 -apple-system, sans-serif; color: #dc2626;
+    text-shadow: 0 0 2px #fff, 0 0 2px #fff;
+  }
   .pin-pulse { animation: pinpulse .45s ease-in-out 4; }
   @keyframes pinpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.55); } }
   .leaflet-popup-content { font: 14px/1.4 -apple-system, sans-serif; }
@@ -235,6 +244,12 @@ export function renderPage({ days, total, updatedAt, pins }) {
     position: sticky; top: 0; z-index: 1; margin: 0 0 .6rem;
     padding: .5rem 0; font-size: 1.05rem; letter-spacing: .01em;
     background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  .day-past h2 { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .day-past .event { opacity: .55; }
+  .past-tag {
+    text-decoration: none; display: inline-block; color: #dc2626;
+    font-weight: 700; margin-right: .1rem;
   }
   ul.events { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
   .event {

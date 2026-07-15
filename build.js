@@ -103,6 +103,11 @@ async function main() {
   all.forEach((e, i) => (e.id = i));
   const days = groupByDay(all);
 
+  // A day (and its pins) is "past" once its calendar date is before today (Pacific).
+  const today = DateTime.now().setZone(ZONE).startOf("day");
+  const isPast = (dt) => dt.startOf("day") < today;
+  days.forEach((d) => (d.past = DateTime.fromISO(d.dayKey, { zone: ZONE }) < today));
+
   const pins = all
     .filter((e) => typeof e.lat === "number" && typeof e.lon === "number")
     .map((e) => ({
@@ -115,6 +120,7 @@ async function main() {
       location: e.location,
       day: e.start.toFormat("d"),
       when: e.start.toFormat("ccc LLL d, h:mm a"),
+      past: isPast(e.start),
     }));
 
   const updatedAt = DateTime.now().setZone(ZONE).toFormat("cccc, LLLL d 'at' h:mm a 'PT'");

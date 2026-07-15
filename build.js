@@ -108,10 +108,11 @@ async function main() {
   const isPast = (dt) => dt.startOf("day") < today;
 
   // Map pins are colored by day so each day's stops read as one cluster.
-  // Distinct, light/dark-friendly hues; blue is reserved for the "you are here" marker.
+  // Ordered to alternate warm/cool so consecutive days never share a similar hue;
+  // blue (#2563eb) is reserved for the "you are here" marker.
   const PALETTE = [
-    "#dc2626", "#ea580c", "#ca8a04", "#16a34a", "#0d9488",
-    "#7c3aed", "#db2777", "#4f46e5", "#65a30d", "#c026d3",
+    "#e11d48", "#0d9488", "#d97706", "#7c3aed",
+    "#15803d", "#db2777", "#0891b2", "#c026d3",
   ];
   const PAST_COLOR = "#9ca3af";
   const dayColorByKey = new Map();

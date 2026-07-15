@@ -106,7 +106,21 @@ async function main() {
   // A day (and its pins) is "past" once its calendar date is before today (Pacific).
   const today = DateTime.now().setZone(ZONE).startOf("day");
   const isPast = (dt) => dt.startOf("day") < today;
-  days.forEach((d) => (d.past = DateTime.fromISO(d.dayKey, { zone: ZONE }) < today));
+
+  // Map pins are colored by day so each day's stops read as one cluster.
+  // Distinct, light/dark-friendly hues; blue is reserved for the "you are here" marker.
+  const PALETTE = [
+    "#dc2626", "#ea580c", "#ca8a04", "#16a34a", "#0d9488",
+    "#7c3aed", "#db2777", "#4f46e5", "#65a30d", "#c026d3",
+  ];
+  const PAST_COLOR = "#9ca3af";
+  const dayColorByKey = new Map();
+  days.forEach((d, i) => {
+    d.past = DateTime.fromISO(d.dayKey, { zone: ZONE }) < today;
+    d.color = d.past ? PAST_COLOR : PALETTE[i % PALETTE.length];
+    d.dayNum = DateTime.fromISO(d.dayKey, { zone: ZONE }).toFormat("d");
+    dayColorByKey.set(d.dayKey, d.color);
+  });
 
   const pins = all
     .filter((e) => typeof e.lat === "number" && typeof e.lon === "number")
@@ -115,7 +129,7 @@ async function main() {
       title: e.title,
       lat: e.lat,
       lon: e.lon,
-      source: e.source,
+      color: dayColorByKey.get(e.start.toFormat("yyyy-LL-dd")),
       url: e.url,
       location: e.location,
       day: e.start.toFormat("d"),
@@ -123,8 +137,17 @@ async function main() {
       past: isPast(e.start),
     }));
 
+  // Legend: one swatch per day that has a pin, in chronological order.
+  const pinnedKeys = new Set(
+    all.filter((e) => typeof e.lat === "number" && typeof e.lon === "number")
+       .map((e) => e.start.toFormat("yyyy-LL-dd"))
+  );
+  const dayColors = days
+    .filter((d) => pinnedKeys.has(d.dayKey))
+    .map((d) => ({ num: d.dayNum, color: d.color, past: d.past }));
+
   const updatedAt = DateTime.now().setZone(ZONE).toFormat("cccc, LLLL d 'at' h:mm a 'PT'");
-  const html = renderPage({ days, total: all.length, updatedAt, pins });
+  const html = renderPage({ days, total: all.length, updatedAt, pins, dayColors });
 
   mkdirSync(join(ROOT, "public"), { recursive: true });
   writeFileSync(join(ROOT, "public", "index.html"), html, "utf8");

@@ -54,16 +54,21 @@ function renderDay(day) {
     </section>`;
 }
 
-function renderMap(pins) {
+function renderMap(pins, dayColors) {
   if (!pins || pins.length === 0) return "";
-  // Leaflet from CDN; data injected as JSON. Pins colored by source.
+  // Leaflet from CDN; data injected as JSON. Pins colored by day.
+  const swatches = (dayColors || [])
+    .map((d) => {
+      const num = d.past ? `<s>${esc(d.num)}</s>` : esc(d.num);
+      return `<span><i class="dot" style="background:${esc(d.color)}"></i> ${num}</span>`;
+    })
+    .join("");
   return `
     <div id="map"></div>
     <div class="map-legend">
-      <span><i class="dot dot-luma"></i> Luma</span>
-      <span><i class="dot dot-manual"></i> Added</span>
+      <span class="legend-label">July:</span>
+      ${swatches}
       <span><i class="dot dot-me">🧍</i> You</span>
-      <span>number = July date</span>
     </div>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -82,9 +87,11 @@ function renderMap(pins) {
         for (const p of PINS) {
           const pastCls = p.past ? " pin-past" : "";
           const cross = p.past ? "<span class='pin-cross'>✕</span>" : "";
+          // Past pins get their grey from .pin-past; upcoming pins use the day color inline.
+          const bg = p.past ? "" : "background:" + p.color + ";";
           const icon = L.divIcon({
             className: "trip-pin",
-            html: "<div class='pin-badge pin-" + p.source + pastCls + "'>" + p.day + cross + "</div>",
+            html: "<div class='pin-badge" + pastCls + "' style='" + bg + "'>" + p.day + cross + "</div>",
             iconSize: [28, 28],
             iconAnchor: [14, 14],
             popupAnchor: [0, -14],
@@ -161,11 +168,11 @@ function renderMap(pins) {
     </script>`;
 }
 
-export function renderPage({ days, total, updatedAt, pins }) {
+export function renderPage({ days, total, updatedAt, pins, dayColors }) {
   const body =
     days.length === 0
       ? `<p class="empty">No events yet. Add some to <code>events.json</code> or set <code>LUMA_ICS_URL</code>.</p>`
-      : renderMap(pins) + days.map(renderDay).join("");
+      : renderMap(pins, dayColors) + days.map(renderDay).join("");
 
   return `<!doctype html>
 <html lang="en">
@@ -203,13 +210,12 @@ export function renderPage({ days, total, updatedAt, pins }) {
     font-size: .75rem; color: var(--muted);
   }
   .map-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+  .map-legend .legend-label { color: var(--muted); font-weight: 600; }
   .map-legend .dot {
     width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff;
     display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-style: normal;
     box-shadow: 0 0 0 1px var(--line);
   }
-  .dot-luma { background: #7c3aed; }
-  .dot-manual { background: #059669; }
   .dot-me { background: #2563eb; }
   .trip-pin { background: transparent; border: none; }
   .pin-badge {
@@ -218,8 +224,6 @@ export function renderPage({ days, total, updatedAt, pins }) {
     font: 700 12px/1 -apple-system, sans-serif; color: #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,.45);
   }
-  .pin-luma { background: #7c3aed; }
-  .pin-manual { background: #059669; }
   .pin-past { background: #9ca3af; opacity: .8; position: relative; }
   .pin-cross {
     position: absolute; inset: -3px 0 auto; top: -8px; right: -6px;

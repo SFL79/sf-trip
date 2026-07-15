@@ -64,5 +64,12 @@
     "notes": "Registered · event runs July 22–23",
     "lat": 37.78406,
     "lon": -122.40145
+  },
+  {
+    "title": "The Odyssey (movie)",
+    "start": "2026-07-20T19:00",
+    "location": "TBD — cinema not chosen yet",
+    "category": "movie",
+    "notes": "Pick a cinema"
   }
 ]

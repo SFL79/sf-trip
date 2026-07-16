@@ -66,6 +66,13 @@
     "lon": -122.40145
   },
   {
+    "title": "Costco + Waymo with Osnat",
+    "start": "2026-07-21T10:00",
+    "end": "2026-07-21T14:00",
+    "category": "errand",
+    "notes": "Location TBD"
+  },
+  {
     "title": "The Odyssey (movie)",
     "start": "2026-07-20T19:00",
     "location": "TBD — cinema not chosen yet",

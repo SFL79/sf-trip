@@ -79,12 +79,5 @@
     "location": "Silicon Valley, CA",
     "category": "meeting",
     "notes": "Location TBD"
-  },
-  {
-    "title": "The Odyssey (movie)",
-    "start": "2026-07-20T19:00",
-    "location": "TBD — cinema not chosen yet",
-    "category": "movie",
-    "notes": "Pick a cinema"
   }
 ]
